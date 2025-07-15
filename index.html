@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Women Safety Chatbot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fce4ec;
+      margin: 0;
+      padding: 0;
+    }
+    #chatbox {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 15px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+      display: flex;
+      flex-direction: column;
+      height: 90vh;
+    }
+    h2 {
+      text-align: center;
+      color: #ad1457;
+    }
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      background: #fff;
+    }
+    .chat {
+      padding: 10px;
+      border-radius: 10px;
+      margin: 10px 0;
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+    .user {
+      background: #e1bee7;
+      text-align: right;
+      margin-left: auto;
+    }
+    .bot {
+      background: #f8bbd0;
+      text-align: left;
+      margin-right: auto;
+    }
+    #inputBox {
+      display: flex;
+      margin-bottom: 10px;
+    }
+    #userInput {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 10px 0 0 10px;
+    }
+    #sendBtn {
+      padding: 10px;
+      background: #ad1457;
+      color: white;
+      border: none;
+      border-radius: 0 10px 10px 0;
+      cursor: pointer;
+    }
+    #personalData {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    #personalData input {
+      flex: 1;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    #actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+    .action-btn {
+      padding: 10px 15px;
+      background: #c2185b;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .action-btn:hover {
+      background: #880e4f;
+    }
+  </style>
+</head>
+<body>
+  <div id="chatbox">
+    <h2>Women Safety Chatbot 🛡️</h2>
+    <div id="messages"></div>
+
+    <div id="inputBox">
+      <input type="text" id="userInput" placeholder="Type your safety concern (e.g. follow, harass)...">
+      <button id="sendBtn">Send</button>
+    </div>
+
+    <div id="personalData">
+      <input type="text" id="userLocation" placeholder="Enter your location">
+      <input type="tel" id="trustedNumber" placeholder="Enter 10-digit trusted contact number" maxlength="10">
+    </div>
+
+    <div id="actions">
+      <button class="action-btn" onclick="callTrustedContact()">📞 Call Trusted Contact</button>
+      <button class="action-btn" onclick="shareLocation()">📍 Share Live Location</button>
+      <button class="action-btn" onclick="showLaws()">⚖ Know Your Rights</button>
+      <button class="action-btn" onclick="emergencyAlert()">🚨 Emergency Alert</button>
+    </div>
+  </div>
+
+  <script>
+    window.onload = function () {
+      const responses = {
+        "follow": "Move to a crowded place and call 1091 immediately.",
+        "blackmail": "Don't respond. Take screenshots and report at cybercrime.gov.in or call 1930.",
+        "harass": "Report harassment to police or internal authorities.",
+        "unsafe": "Press the emergency button or call for help immediately.",
+        "law": "You can file FIR under IPC 354, 509 or 376. Call 1091 or 100 in emergencies.",
+        "tips": "✔ Stay in public ✔ Share location ✔ Charge your phone ✔ Trust instincts",
+        "track": "Scan for unknown apps. Reset permissions or factory reset device."
+      };
+
+      function botReply(msg) {
+        msg = msg.toLowerCase();
+        for (let key in responses) {
+          if (msg.includes(key)) return responses[key];
+        }
+        return "Please use keywords like: follow, harass, law, blackmail, tips.";
+      }
+
+      function appendMessage(sender, text) {
+        const box = document.getElementById("messages");
+        const div = document.createElement("div");
+        div.className = `chat ${sender}`;
+        div.innerText = text;
+        box.appendChild(div);
+        box.scrollTop = box.scrollHeight;
+      }
+
+      document.getElementById("sendBtn").onclick = function () {
+        const input = document.getElementById("userInput");
+        const msg = input.value.trim();
+        if (msg !== "") {
+          appendMessage("user", msg);
+          appendMessage("bot", botReply(msg));
+          input.value = "";
+        }
+      };
+
+      document.getElementById("userInput").addEventListener("keypress", function (e) {
+        if (e.key === "Enter") document.getElementById("sendBtn").click();
+      });
+    };
+
+    function callTrustedContact() {
+      const number = document.getElementById("trustedNumber").value.trim();
+      if (!/^\d{10}$/.test(number)) {
+        alert("⚠ Please enter a valid 10-digit contact number.");
+        return;
+      }
+      window.location.href = `tel:${number}`;
+    }
+
+    function shareLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            const mapLink = `https://maps.google.com/?q=${lat},${lon}`;
+            alert("📍 Location Shared:\n" + mapLink);
+            window.open(mapLink, "_blank");
+          },
+          () => alert("❌ Location access denied.")
+        );
+      } else {
+        alert("❌ Geolocation not supported.");
+      }
+    }
+
+    function showLaws() {
+      alert(`⚖ Legal Rights:
+1. IPC 354 – Assault on women
+2. IPC 509 – Verbal/gesture-based insult
+3. IPC 376 – Rape
+4. Zero FIR – File at any police station
+5. Cybercrime – Call 1930 or visit cybercrime.gov.in`);
+    }
+
+    function emergencyAlert() {
+      const myNumber = "8925254671";
+      if (confirm("🚨 Are you sure you want to dial your emergency number now?")) {
+        window.location.href = `tel:${myNumber}`;
+      }
+    }
+  </script>
+</body>
+</html>
